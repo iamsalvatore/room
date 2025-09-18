@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="ROOM: A Physics-Based Continuum Robot Simulator for Photorealistic Medical Datasets Generation. Advancing bronchoscopy through realistic simulation.">
+  <meta name="keywords" content="medical robotics, bronchoscopy, continuum robots, simulation, deep learning, computer vision">
+  <meta name="author" content="Salvatore Esposito">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://iamsalvatore.io/room/">
+  <meta property="og:title" content="ROOM: Physics-Based Continuum Robot Simulator">
+  <meta property="og:description" content="A comprehensive simulation framework for generating photorealistic bronchoscopy training data">
+  <meta property="og:image" content="http://iamsalvatore.io/room/assets/images/teaser.jpg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="http://iamsalvatore.io/room/">
+  <meta property="twitter:title" content="ROOM: Physics-Based Continuum Robot Simulator">
+  <meta property="twitter:description" content="A comprehensive simulation framework for generating photorealistic bronchoscopy training data">
+  <meta property="twitter:image" content="http://iamsalvatore.io/room/assets/images/teaser.jpg">
+
+  <title>ROOM: A Physics-Based Continuum Robot Simulator for Photorealistic Medical Datasets Generation</title>
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Academicons for academic icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <!-- AOS Library for scroll animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+    /* Global Styles */
+    :root {
+      --primary-color: #00796b;
+      --secondary-color: #004d40;
+      --accent-color: #ff6f61;
+      --text-dark: #2c3e50;
+      --bg-light: #f8f9fa;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* Container styles */
+    .container.is-max-desktop {
+      max-width: 1440px;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem 1.5rem;
+    }
+
+    .publication-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      line-height: 1.2;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .publication-authors {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .author-block {
+      display: inline-block;
+      margin-right: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .author-block sup {
+      margin-left: 2px;
+      font-size: 0.75em;
+      color: #ffd700;
+    }
+
+    .publication-venue {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      color: #ffd700;
+    }
+
+    /* Teaser Image */
+    .teaser-image {
+      margin: 3rem auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 90%;
+    }
+
+    .teaser-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* Publication Links */
+    .publication-links {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .publication-links .button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .publication-links .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    /* Section Styles */
+    .section {
+      padding: 4rem 1.5rem;
+    }
+
+    .section:nth-child(even) {
+      background-color: var(--bg-light);
+    }
+
+    .title {
+      color: var(--text-dark);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+
+    /* Content Styles */
+    .content {
+      font-size: 1.1rem;
+      color: #555;
+      line-height: 1.8;
+    }
+
+    .content p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Image Styles */
+    img {
+      display: block;
+      margin: 2rem auto;
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    /* Video Styles */
+    video {
+      margin: 2rem auto;
+      display: block;
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    /* Video Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .video-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .video-item:hover {
+      transform: scale(1.03);
+    }
+
+    .video-label {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* Video Comparison Slider */
+    .comparison-slider {
+      position: relative;
+      max-width: 1000px;
+      margin: 3rem auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      padding: 1rem;
+    }
+
+    .slider-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .slider-wrapper {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+
+    .slide {
+      flex: 0 0 100%;
+      position: relative;
+    }
+
+    .slide video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .slide-label {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    /* Slider Controls */
+    .slider-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .slider-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .slider-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .slider-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Slider Dots */
+    .slider-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transform: scale(1.3);
+    }
+
+    /* Results Table */
+    .results-table {
+      margin: 2rem auto;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .table {
+      font-size: 1rem;
+    }
+
+    .table thead {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .table tbody tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* Code/BibTeX Block */
+    pre {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    code {
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .publication-title {
+        font-size: 2rem;
+      }
+
+      .author-block {
+        display: block;
+        margin-right: 0;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Footer */
+    .footer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .footer a {
+      color: #ffd700;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Loading animation */
+    .hero-body {
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Smooth hover transitions */
+    .button, .feature-card, .video-item, img {
+      transition: all 0.3s ease;
+    }
+
+    /* Add subtle animations to sections */
+    section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Improve button hover states */
+    .publication-links .button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Add gradient text for venue */
+    .publication-venue {
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    /* Improve code block appearance */
+    pre {
+      position: relative;
+      background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    }
+
+    pre::before {
+      content: "BibTeX";
+      position: absolute;
+      top: 0.5rem;
+      right: 1rem;
+      color: #718096;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title fade-in">
+            ROOM: A Physics-Based Continuum Robot Simulator for<br>
+            Photorealistic Medical Datasets Generation
+          </h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Salvatore Esposito<sup>1</sup></span>
+            <span class="author-block">Matías Mattamala<sup>1</sup></span>
+            <span class="author-block">Daniel Rebain<sup>2</sup></span>
+            <span class="author-block">Francis Xiatian Zhang<sup>1</sup></span>
+            <span class="author-block">Kevin Dhaliwal<sup>1</sup></span>
+            <span class="author-block">Mohsen Khadem<sup>1</sup></span>
+            <span class="author-block">Subramanian Ramamoorthy<sup>1</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>University of Edinburgh</span>
+            <span class="author-block"><sup>2</sup>University of British Columbia</span>
+          </div>
+
+          <!-- Publication Links -->
+          <div class="publication-links">
+            <a href="./assets/room.pdf" class="button is-rounded">
+              <span class="icon">
+                <i class="fas fa-file-pdf"></i>
+              </span>
+              <span>Paper</span>
+            </a>
+            <a href="https://arxiv.org" target="_blank" rel="noopener noreferrer" class="button is-rounded">
+              <span class="icon">
+                <i class="ai ai-arxiv" style="font-size: 1.2em;"></i>
+              </span>
+              <span>arXiv</span>
+            </a>
+            <a href="https://github.com/iamsalvatore/room" target="_blank" rel="noopener noreferrer" class="button is-rounded">
+              <span class="icon">
+                <i class="fab fa-github"></i>
+              </span>
+              <span>Code (Coming Soon)</span>
+            </a>
+            <a href="#" class="button is-rounded" title="Coming Soon">
+              <span class="icon">
+                <i class="fas fa-database"></i>
+              </span>
+              <span>Dataset (Coming Soon)</span>
+            </a>
+          </div>
+
+          <div class="publication-venue">
+            <i class="fas fa-scroll"></i> arXiv Preprint 2025
+          </div>
+
+          <div class="teaser-image" data-aos="fade-up">
+            <img src="./assets/images/teaser.jpg" alt="ROOM Framework Overview">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Abstract Section -->
+<section class="section" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Continuum robots are advancing bronchoscopy procedures by accessing complex lung airways and enabling
+            targeted interventions. However, their development is limited by the lack of realistic training and test
+            environments: Real data is difficult to collect due to ethical constraints and patient safety concerns,
+            and developing autonomy algorithms requires realistic imaging and physical feedback.
+          </p>
+          <p>
+            We present <strong>ROOM (Realistic Optical Observation in Medicine)</strong>, a comprehensive simulation
+            framework designed for generating photorealistic bronchoscopy training data. By leveraging patient CT scans,
+            our pipeline renders multi-modal sensor data including RGB images with realistic noise and light specularities,
+            metric depth maps, surface normals, optical flow and point clouds at medically relevant scales.
+          </p>
+          <p>
+            We validate the data generated by ROOM through monocular depth estimation experiments, demonstrating
+            diverse challenges that state-of-the-art methods must overcome to transfer to these medical settings.
+            Furthermore, we show that the data produced by ROOM can be used to fine-tune existing depth estimation
+            models to overcome these challenges, enabling downstream applications such as vision-based navigation
+            with Model Predictive Control.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Features Section -->
+<section class="section" style="background: var(--bg-light);" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Key Features</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div class="feature-title">Physics-Based Simulation</div>
+            <p>Accurate continuum robot dynamics with realistic tissue interactions</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-camera"></i>
+            </div>
+            <div class="feature-title">Photorealistic Rendering</div>
+            <p>Path-traced imagery with endoscopic lighting and sensor noise modeling</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <div class="feature-title">Multi-Modal Data</div>
+            <p>RGB, depth, normals, optical flow, and point clouds synchronized</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-lungs"></i>
+            </div>
+            <div class="feature-title">Patient-Specific Models</div>
+            <p>Automated pipeline from CT scans to anatomically accurate 3D models</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Method Overview Section -->
+<section class="section" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Method Overview</h2>
+        <div>
+          <img src="./assets/images/pipeline.jpg" alt="ROOM Pipeline">
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            Our pipeline consists of four main stages: (1) <strong>Medial Axis Extraction</strong> from segmented CT lung models,
+            (2) <strong>Automated Sampling</strong> along skeletal branches with higher density at bifurcations and high-curvature regions,
+            (3) <strong>Data Synthesis</strong> generating synchronized multi-modal sensor streams, and (4) <strong>Sensor Noise Modeling</strong>
+            applying realistic noise characteristics matching real bronchoscopy imagery through frequency-domain analysis.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Visual Comparisons Section -->
+<section class="section" style="background: var(--bg-light);" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Visual Comparisons</h2>
+        <div>
+          <img src="./assets/images/comparison.png" alt="Visual comparison of ROOM outputs">
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            <strong>Left:</strong> Real bronchoscopy data captured from a continuum robot showing specular highlights from wet mucosal surfaces and directional lighting.
+            <strong>Center:</strong> ROOM's photorealistic rendering using Blender's path tracing with Principled BSDF shaders, accurately reproducing tissue surface properties and lighting conditions.
+            <strong>Right:</strong> Naive PyBullet-based rendering lacking photorealistic materials and lighting.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Video Demonstrations Section -->
+<section class="section" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Airway Navigation Demonstrations</h2>
+        <div class="comparison-slider">
+          <div class="slider-container">
+            <div class="slider-wrapper" id="videoSlider">
+              <div class="slide">
+                <div class="slide-label">Navigation Demo 1</div>
+                <video autoplay loop muted playsinline>
+                  <source src="./assets/videos/airway.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <div class="slide">
+                <div class="slide-label">Navigation Demo 2</div>
+                <video autoplay loop muted playsinline>
+                  <source src="./assets/videos/airway2.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          </div>
+          <div class="slider-controls">
+            <button class="slider-btn" id="prevBtn">
+              <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button class="slider-btn" id="nextBtn">
+              Next <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+          <div class="slider-dots">
+            <span class="dot active" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+          </div>
+        </div>
+        <div class="content has-text-centered">
+          <p>
+            Interactive demonstrations of continuum robot navigation through airways using ROOM-generated data.
+            The simulator provides realistic physics-based interactions and photorealistic rendering for training
+            autonomous navigation algorithms.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Results Section -->
+<section class="section" style="background: var(--bg-light);" data-aos="fade-up">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full">
+        <h2 class="title is-3">Experimental Results</h2>
+
+        <!-- Fine-tuning Results -->
+        <div class="content">
+          <h3 class="title is-4">Monocular Depth Estimation - Fine-tuning with ROOM Data</h3>
+          <img src="./assets/images/fig6_finetune.jpg" alt="Fine-tuning results">
+          <p>
+            Models fine-tuned on ROOM synthetic data show significant improvements on real bronchoscopy images,
+            validating our simulation framework's effectiveness for domain adaptation. The comparison demonstrates
+            clear performance gains across multiple state-of-the-art depth estimation methods.
+          </p>
+        </div>
+
+        <!-- MPC Navigation Results -->
+        <div class="content">
+          <h3 class="title is-4">Vision-Based Navigation with MPC</h3>
+          <img src="./assets/images/nav.jpg" alt="MPC Navigation demonstration">
+          <p>
+            Demonstration of Model Predictive Control (MPC) for vision-based navigation through airways.
+            The planner uses depth predictions from models trained on ROOM data to generate collision-free
+            paths, showcasing the practical application of our simulation framework for autonomous bronchoscopy.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Citation Section -->
+<section class="section" style="background: var(--bg-light);" id="citation" data-aos="fade-up">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3 has-text-centered">Citation</h2>
+    <p>If you find our work useful in your research, please consider citing:</p>
+    <pre><code>@article{esposito2025room,
+  title={ROOM: A Physics-Based Continuum Robot Simulator for Photorealistic Medical Datasets Generation},
+  author={Esposito, Salvatore and Mattamala, Matías and Rebain, Daniel and
+          Zhang, Francis Xiatian and Dhaliwal, Kevin and Khadem, Mohsen and
+          Ramamoorthy, Subramanian},
+  journal={arXiv preprint arXiv:2025.xxxxx},
+  year={2025}
+}</code></pre>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>
+      <strong>ROOM</strong> - A Physics-Based Continuum Robot Simulator
+    </p>
+    <p>
+      <a href="https://github.com/iamsalvatore/room" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-github"></i> View on GitHub
+      </a>
+    </p>
+    <p>
+      © 2025 Salvatore Esposito. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+<!-- JavaScript -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  // Initialize AOS
+  AOS.init({
+    duration: 1000,
+    once: true,
+    offset: 100
+  });
+
+  // Video Slider Functionality
+  let slideIndex = 1;
+  const slider = document.getElementById('videoSlider');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const dots = document.getElementsByClassName('dot');
+
+  function showSlide(n) {
+    const slides = slider.children.length;
+
+    if (n > slides) slideIndex = 1;
+    if (n < 1) slideIndex = slides;
+
+    // Move slider
+    slider.style.transform = `translateX(-${(slideIndex - 1) * 100}%)`;
+
+    // Update dots
+    for (let i = 0; i < dots.length; i++) {
+      dots[i].classList.remove('active');
+    }
+    dots[slideIndex - 1].classList.add('active');
+
+    // Update button states
+    prevBtn.disabled = slideIndex === 1;
+    nextBtn.disabled = slideIndex === slides;
+  }
+
+  function currentSlide(n) {
+    slideIndex = n;
+    showSlide(slideIndex);
+  }
+
+  prevBtn.addEventListener('click', () => {
+    slideIndex--;
+    showSlide(slideIndex);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    slideIndex++;
+    showSlide(slideIndex);
+  });
+
+  // Auto-play slider
+  setInterval(() => {
+    if (slideIndex < slider.children.length) {
+      slideIndex++;
+      showSlide(slideIndex);
+    } else {
+      slideIndex = 1;
+      showSlide(slideIndex);
+    }
+  }, 5000);
+
+  // Initialize
+  showSlide(slideIndex);
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+
+  // Add parallax effect to hero section with performance optimization
+  let ticking = false;
+  function updateParallax() {
+    const scrolled = window.pageYOffset;
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  });
+</script>
+
+</body>
+</html>
